@@ -1,0 +1,11 @@
+question: I drive with teleop_twist_keyboard but the robot does not move at all.
+faults:
+  - op: rename
+    path: [nodes, /diff_drive_controller, subscribes, /cmd_vel]
+    value: /diff_drive_controller/cmd_vel_unstamped
+expected:
+  root_cause: topic_name_mismatch
+  entity: [/cmd_vel, /diff_drive_controller/cmd_vel_unstamped]
+  explanation: >
+    Teleop publishes /cmd_vel but the controller listens on
+    /diff_drive_controller/cmd_vel_unstamped. Remap one side so both use the same topic.

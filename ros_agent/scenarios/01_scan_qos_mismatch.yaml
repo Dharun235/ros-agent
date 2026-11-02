@@ -1,0 +1,10 @@
+question: The SLAM map never updates. The lidar seems to be running. What is wrong?
+difficulty: medium
+faults:
+  - {op: set, path: [nodes, /slam_toolbox, subscribes, /scan, qos, reliability], value: reliable}
+expected:
+  root_cause: qos_mismatch
+  entity: /scan
+  explanation: >
+    /lidar_driver publishes /scan BEST_EFFORT but /slam_toolbox subscribes RELIABLE,
+    so the subscription never matches. Make the subscriber best_effort (sensor data QoS).

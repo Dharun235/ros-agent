@@ -1,0 +1,9 @@
+question: SLAM is not building a map and RViz shows no laser scan.
+faults:
+  - {op: delete, path: [nodes, /lidar_driver]}
+expected:
+  root_cause: missing_publisher
+  entity: [/scan, /lidar_driver]
+  explanation: >
+    Nothing publishes /scan: the /lidar_driver node is not running. Check its
+    launch output or USB connection and restart it.

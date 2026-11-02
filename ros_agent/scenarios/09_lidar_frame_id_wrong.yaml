@@ -1,0 +1,10 @@
+question: The laser scan does not show up in RViz even though /scan is publishing at 10 Hz.
+difficulty: hard
+faults:
+  - {op: set, path: [nodes, /lidar_driver, params, frame_id], value: laser_frame}
+expected:
+  root_cause: wrong_parameter
+  entity: [/lidar_driver:frame_id, laser_frame]
+  explanation: >
+    The driver stamps scans with frame laser_frame, but the TF tree only has a
+    frame named laser. Set frame_id to laser or rename the URDF link.

@@ -1,0 +1,11 @@
+question: slam_toolbox keeps warning that it drops laser scans because of a transform problem.
+difficulty: medium
+faults:
+  - {op: delete, path: [tf, base_link -> laser]}
+expected:
+  root_cause: missing_transform
+  entity: [base_link->laser, laser]
+  explanation: >
+    No transform from base_link to laser is published, so scans in frame laser
+    cannot be placed on the robot. Add the laser joint to the URDF or publish a
+    static transform.

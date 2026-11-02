@@ -1,0 +1,11 @@
+question: After upgrading to ROS 2 Jazzy my robot ignores teleop commands, but the topic names look right.
+difficulty: hard
+faults:
+  - {op: set, path: [nodes, /diff_drive_controller, subscribes, /cmd_vel, type], value: geometry_msgs/msg/TwistStamped}
+expected:
+  root_cause: type_mismatch
+  entity: /cmd_vel
+  explanation: >
+    The controller now expects geometry_msgs/msg/TwistStamped on /cmd_vel while
+    teleop publishes geometry_msgs/msg/Twist. Use a stamped teleop (stamped:=true)
+    or set the controller's use_stamped_vel to false.

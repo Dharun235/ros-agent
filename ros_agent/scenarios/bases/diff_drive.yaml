@@ -1,0 +1,73 @@
+# A working differential-drive robot with lidar, camera and SLAM, similar to a
+# TurtleBot running slam_toolbox. Scenarios break it with fault operations.
+nodes:
+  /teleop_twist_keyboard:
+    publishes:
+      /cmd_vel: {type: geometry_msgs/msg/Twist, rate: 10}
+
+  /diff_drive_controller:
+    subscribes:
+      /cmd_vel: {type: geometry_msgs/msg/Twist}
+    publishes:
+      /odom: {type: nav_msgs/msg/Odometry, rate: 50}
+    params:
+      wheel_separation: 0.287
+      wheel_radius: 0.033
+      publish_rate: 50.0
+      odom_frame_id: odom
+      base_frame_id: base_link
+
+  /joint_state_broadcaster:
+    publishes:
+      /joint_states: {type: sensor_msgs/msg/JointState, rate: 50}
+
+  /robot_state_publisher:
+    subscribes:
+      /joint_states: {type: sensor_msgs/msg/JointState}
+    publishes:
+      /robot_description:
+        type: std_msgs/msg/String
+        qos: {durability: transient_local, depth: 1}
+
+  /lidar_driver:
+    publishes:
+      /scan:
+        type: sensor_msgs/msg/LaserScan
+        rate: 10
+        qos: {reliability: best_effort, depth: 5}
+    params:
+      frame_id: laser
+      range_max: 12.0
+
+  /camera_driver:
+    publishes:
+      /camera/image_raw:
+        type: sensor_msgs/msg/Image
+        rate: 30
+        qos: {reliability: best_effort, depth: 5}
+    params:
+      frame_id: camera_link
+
+  /slam_toolbox:
+    subscribes:
+      /scan:
+        type: sensor_msgs/msg/LaserScan
+        qos: {reliability: best_effort, depth: 5}
+    publishes:
+      /map:
+        type: nav_msgs/msg/OccupancyGrid
+        rate: 0.2
+        qos: {durability: transient_local, depth: 1}
+    params:
+      base_frame: base_link
+      odom_frame: odom
+      map_frame: map
+      scan_topic: /scan
+
+tf:
+  map -> odom: {publisher: /slam_toolbox, rate: 20}
+  odom -> base_link: {publisher: /diff_drive_controller, rate: 50}
+  base_link -> laser: {publisher: /robot_state_publisher, static: true}
+  base_link -> camera_link: {publisher: /robot_state_publisher, static: true}
+  base_link -> wheel_left_link: {publisher: /robot_state_publisher, rate: 50}
+  base_link -> wheel_right_link: {publisher: /robot_state_publisher, rate: 50}

@@ -1,0 +1,12 @@
+question: Navigation complains that odometry is stale even though the controller node is up.
+difficulty: medium
+faults:
+  - {op: set, path: [nodes, /diff_drive_controller, publishes, /odom, rate], value: 0}
+  - {op: set, path: [tf, odom -> base_link, rate], value: 0}
+expected:
+  root_cause: stalled_publisher
+  entity: [/odom, /diff_drive_controller]
+  explanation: >
+    /diff_drive_controller is running and advertises /odom, but publishes no
+    messages and no odom->base_link transform. The controller is likely not
+    activated or its hardware interface is not reading the wheels.

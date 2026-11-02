@@ -1,0 +1,6 @@
+question: Before a demo, can you check whether anything is wrong with my robot's ROS setup?
+faults: []
+expected:
+  root_cause: none
+  entity: ""
+  explanation: All publishers, subscriptions, QoS, parameters and transforms are consistent.

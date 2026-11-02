@@ -1,0 +1,10 @@
+question: slam_toolbox starts but never publishes a map, and its log mentions timestamps of zero.
+difficulty: hard
+faults:
+  - {op: set, path: [nodes, /slam_toolbox, params, use_sim_time], value: true}
+expected:
+  root_cause: sim_time_mismatch
+  entity: /slam_toolbox:use_sim_time
+  explanation: >
+    /slam_toolbox has use_sim_time true, but nothing publishes /clock on a real
+    robot, so its clock stays at zero. Set use_sim_time to false.

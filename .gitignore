@@ -32,10 +32,6 @@ build/
 dist/
 *.egg-info/
 
-# ROS 2 / colcon workspace output
-install/
-log/
-
 # Local database files
 *.sqlite
 *.sqlite3

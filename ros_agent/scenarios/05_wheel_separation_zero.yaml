@@ -1,0 +1,10 @@
+question: Driving straight works, but as soon as the robot turns its odometry heading goes crazy.
+difficulty: medium
+faults:
+  - {op: set, path: [nodes, /diff_drive_controller, params, wheel_separation], value: 0.0}
+expected:
+  root_cause: wrong_parameter
+  entity: /diff_drive_controller:wheel_separation
+  explanation: >
+    wheel_separation is 0.0, so the controller divides by zero when computing
+    angular velocity. Set it to the real distance between the wheels (0.287 m).
