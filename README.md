@@ -24,7 +24,7 @@ so they never connect. Set the subscriber to best_effort (sensor data QoS).
 
 ```bash
 pip install -e .
-ollama pull qwen3:4b      # or any tool-calling model
+ollama pull qwen3:4b-instruct   # or any tool-calling model
 ```
 
 ## Use
@@ -57,12 +57,27 @@ all. The simulated tools print the same text as the real `ros2` CLI, so what a
 model learns here carries over to live robots.
 
 ```bash
-ros-agent bench --model qwen3:4b --out data/bench.jsonl
+ros-agent bench --model qwen3:4b-instruct --out data/bench.jsonl
 ```
 
 A run is solved when the model names the right root cause and the faulty
 topic, node, parameter or frame. Every conversation is saved, so solved runs can
 become training data for a small specialised model.
+
+### Results
+
+First baseline, M2 MacBook (16 GB), Ollama, 2 November 2026:
+
+| Model | Solved | Right root cause | Tool calls per scenario | Time per scenario |
+| --- | --- | --- | --- | --- |
+| qwen3:4b-instruct (Q4_K_M) | 2/10 | 30% | 7.0 | 42 s |
+| qwen3:0.6b | 1/10 | 10% | 0 | 3 s |
+
+The 4B model inspects the graph sensibly but over-guesses `missing_publisher`
+and `missing_transform`; it solved the dead lidar driver and the missing laser
+transform. `qwen3:4b` (the thinking variant) keeps reasoning even with
+thinking disabled, which made it too slow to finish on this machine. These
+scores are the starting point for better prompts and a fine-tuned model.
 
 ## Add a scenario
 

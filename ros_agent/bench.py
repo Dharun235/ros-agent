@@ -34,6 +34,10 @@ def score(answer: dict | None, scenario: Scenario) -> dict:
 
 def run_bench(scenarios: list[Scenario], client, out: Path | None = None, max_tool_calls: int = 12) -> dict:
     rows = []
+    fh = None
+    if out:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        fh = out.open("w")
     for scenario in scenarios:
         started = time.monotonic()
         result = run_agent(scenario.question, SimBackend(scenario.graph), client, max_tool_calls)
@@ -49,15 +53,15 @@ def run_bench(scenarios: list[Scenario], client, out: Path | None = None, max_to
             "messages": result.messages,
         }
         rows.append(row)
+        if fh:  # write as we go so a long run keeps partial results
+            fh.write(json.dumps(row) + "\n")
+            fh.flush()
         mark = "PASS" if row["solved"] else "fail"
         got = (result.answer or {}).get("root_cause", result.error or "no answer")
         print(f"{mark}  {scenario.id:<32} {row['tool_calls']:>2} calls {row['seconds']:>6}s  got: {got}", flush=True)
 
-    if out:
-        out.parent.mkdir(parents=True, exist_ok=True)
-        with out.open("w") as fh:
-            for row in rows:
-                fh.write(json.dumps(row) + "\n")
+    if fh:
+        fh.close()
     solved = sum(r["solved"] for r in rows)
     summary = {
         "solved": solved,

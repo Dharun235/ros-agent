@@ -93,7 +93,7 @@ class OllamaClient:
             if m["role"] == "tool":
                 entry["tool_name"] = m["name"]
             wire.append(entry)
-        payload = {"model": self.model, "messages": wire, "stream": False, "think": self.think, "options": {"temperature": 0.2}}
+        payload = {"model": self.model, "messages": wire, "stream": False, "think": self.think, "options": {"temperature": 0.2, "num_ctx": 8192}}
         if tools:
             payload["tools"] = tools
         message = _post(f"{self.host}/api/chat", payload, self.timeout)["message"]

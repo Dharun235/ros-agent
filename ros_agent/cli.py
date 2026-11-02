@@ -13,7 +13,7 @@ from ros_agent.bench import run_bench
 from ros_agent.graph import SCENARIO_DIR, load_scenario, load_scenarios
 from ros_agent.tools import LiveBackend, SimBackend
 
-DEFAULT_MODEL = os.environ.get("ROS_AGENT_MODEL", "qwen3:4b")
+DEFAULT_MODEL = os.environ.get("ROS_AGENT_MODEL", "qwen3:4b-instruct")
 
 
 def _client(args):
